@@ -1,2 +1,6 @@
 .idea
 target/
+.properties
+logback.xml
+/src/test/java/BonusTest.java
+/logs/
