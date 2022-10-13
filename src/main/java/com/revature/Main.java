@@ -9,6 +9,8 @@ public class Main
     public static void main(String[] args){
         Javalin app = Javalin.create().start(8080);
         UserController uc = new UserController();
-        app.post("/users", uc.createNewUser);
+        app.post("/registerUser", uc.createNewUser);
+        app.post("/userLogin", uc.logUserIn);
+
     }
 }
