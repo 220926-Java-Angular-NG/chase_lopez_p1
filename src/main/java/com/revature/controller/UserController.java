@@ -4,11 +4,9 @@ import com.revature.models.User;
 import com.revature.services.UserService;
 import io.javalin.http.Handler;
 
-import java.util.List;
-
 public class UserController {
 
-    UserService userService;
+    private UserService userService;
 
     public UserController() {
         userService = new UserService();

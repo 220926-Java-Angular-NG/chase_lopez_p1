@@ -31,7 +31,7 @@ public class UserRepo implements CrudDaoInterface<User> {
             return -1;
         } else {
             try {
-                String sql = "INSERT INTO users(id,username,passcode,employeestatus) VALUES (default,?,?,default)";
+                String sql = "INSERT INTO users(userid,username,passcode,employeestatus) VALUES (default,?,?,default)";
                 PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 pstmt.setString(1, user.getUsername());
                 pstmt.setString(2, user.getPasscode());
@@ -41,7 +41,7 @@ public class UserRepo implements CrudDaoInterface<User> {
                 ResultSet rs = pstmt.getGeneratedKeys();
 
                 rs.next();
-                return rs.getInt("id");
+                return rs.getInt("userid");
 
             } catch (SQLException e) {
                 LOGGER.error(e.getMessage());
@@ -61,7 +61,7 @@ public class UserRepo implements CrudDaoInterface<User> {
             PreparedStatement pstmt = con.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                User u = new User(rs.getInt("id"),
+                User u = new User(rs.getInt("userid"),
                         rs.getString("username"),
                         rs.getString("passcode"), rs.getString("employeestatus")
                 );
@@ -77,14 +77,14 @@ public class UserRepo implements CrudDaoInterface<User> {
     }
 
     @Override
-    public User getByID(int id) {
-        String sql = "SELECT * From users WHERE id = ?";
+    public User getByID(int userid) {
+        String sql = "SELECT * From users WHERE userid = ?";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, userid);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
-            User user = new User(rs.getInt("id"),
+            User user = new User(rs.getInt("userid"),
                     rs.getString("username"),
                     rs.getString("passcode"),
                     rs.getString("employeestatus"));
@@ -105,7 +105,7 @@ public class UserRepo implements CrudDaoInterface<User> {
             ResultSet rs = pstmt.executeQuery();
             rs.next();
 
-            User u = new User(rs.getInt("id"),
+            User u = new User(rs.getInt("userid"),
                     rs.getString("username"),
                     rs.getString("passcode"),
                     rs.getString("employeestatus"));
@@ -120,12 +120,12 @@ public class UserRepo implements CrudDaoInterface<User> {
 
     @Override
     public User update(User user) {
-        String sql = "UPDATE users SET passcode = ? WHERE id = ?";
+        String sql = "UPDATE users SET passcode = ? WHERE userid = ?";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = pstmt.executeQuery(sql);
             pstmt.setString(1, user.getPasscode());
-            pstmt.setInt(2, user.getId());
+            pstmt.setInt(2, user.getUserid());
 
             while (rs.next()) {
                 user.setPasscode(rs.getString("passcode"));
@@ -140,10 +140,10 @@ public class UserRepo implements CrudDaoInterface<User> {
 
     @Override
     public boolean delete(User user) {
-        String sql = "DELETE FROM users WHERE id = ?";
+        String sql = "DELETE FROM users WHERE userid = ?";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, user.getId());
+            pstmt.setInt(1, user.getUserid());
             return pstmt.execute();
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());

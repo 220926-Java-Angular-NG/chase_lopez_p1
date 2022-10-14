@@ -3,7 +3,7 @@ package com.revature.models;
 import java.util.Objects;
 
 public class User {
-    private int id;
+    private int userid;
     private String username;
     private String passcode;
 
@@ -18,18 +18,18 @@ public class User {
     }
 
     public User(int id, String username, String passcode, String employeestatus) {
-        this.id = id;
+        this.userid = id;
         this.username = username;
         this.passcode = passcode;
         this.employeestatus = employeestatus;
     }
 
-    public int getId() {
-        return id;
+    public int getUserid() {
+        return userid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserid(int userid) {
+        this.userid = userid;
     }
 
     public String getUsername() {
@@ -59,7 +59,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "id=" + userid +
                 ", username='" + username + '\'' +
                 ", passcode='" + passcode + '\'' +
                 ", employeestatus='" + employeestatus + '\'' +
@@ -71,6 +71,6 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(username, user.username) && Objects.equals(passcode, user.passcode) && Objects.equals(employeestatus, user.employeestatus);
+        return userid == user.userid && Objects.equals(username, user.username) && Objects.equals(passcode, user.passcode) && Objects.equals(employeestatus, user.employeestatus);
     }
 }
