@@ -33,4 +33,8 @@ public class TicketService {
     public Ticket getByID(int ticketCode) {
         return ticketRepo.getByID(ticketCode);
     }
+
+    public List<Ticket> getAllTicketsThatArePending(String userID) {
+        return ticketRepo.getAllTicketsThatArePending(userID);
+    }
 }

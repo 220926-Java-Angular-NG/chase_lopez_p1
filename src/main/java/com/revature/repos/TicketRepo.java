@@ -149,4 +149,36 @@ public class TicketRepo implements CrudDaoInterface<Ticket> {
         }
         return null;
     }
+
+    public List<Ticket> getAllTicketsThatArePending(String userID) {
+        //check if the user is a manager if not send error
+        //get tickets that are pending only
+
+        List<Ticket> allTickets = new ArrayList<>();
+        String sql = "select * from tickets where ticketstatus = 'pending'";
+        String sql2 = "select * from users where(userid = ? and employeestatus = 'manager')";
+        try {
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            PreparedStatement pstmt2 = con.prepareStatement(sql2);
+            pstmt2.setInt(1, Integer.parseInt(userID));
+            ResultSet rs = pstmt.executeQuery();
+            ResultSet rsu = pstmt2.executeQuery();
+            if (rsu.next()) {
+
+                while (rs.next()) {
+                    Ticket ticket = new Ticket(rs.getInt("ticketid"),
+                            rs.getDouble("amount"),
+                            rs.getString("description"),
+                            rs.getString("ticketstatus"),
+                            rs.getInt("userid"));
+                    System.out.println(ticket.toString());
+                    allTickets.add(ticket);
+                }
+                return allTickets;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }

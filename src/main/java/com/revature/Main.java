@@ -17,6 +17,7 @@ public class Main
         //4 5
         app.post("/users/{id}/createTicket",ticketController.createTicket);
         //6 pending tickets in list for managers
+        app.get("/users/{id}/managerTicketList",ticketController.getAllPendingTickets);
         //7 tickets can be processed
 
 
