@@ -53,21 +53,23 @@ public class UserController {
                 context.result("You must enter a passcode").status(400);
             if (user.getUsername() == null && user.getPasscode() != null)
                 context.result("You must enter a username").status(400);
-        }else {
+        }else{
             int loginCode = userService.login(user);
-            switch (loginCode) {
-                case -1:
+            System.out.println("login code: " + loginCode);
+            if (loginCode <= 0) {
+                switch (loginCode) {
+                    case -1:
+                        context.result("Your passcode does not match!").status(400);
+                        break;
+                    case 0:
+                        context.result("User does not exist, please register user").status(401);
+                        break;
+                }
+            }else if(loginCode>0){
+                context.result("Successful login!").status(201);
 
-                    context.result("Your passcode does not match!").status(400);
-                    break;
-                case 0:
-                    context.result("User does not exist, please register user").status(401);
-                    break;
-                case 1:
-
-                    context.result("Successful login!").status(200);
-                    break;
             }
+
         }
     };
 }
