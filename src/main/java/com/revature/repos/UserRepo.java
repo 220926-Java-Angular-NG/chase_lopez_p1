@@ -173,12 +173,16 @@ public class UserRepo implements CrudDaoInterface<User> {
 
     public int login(User user) {
         User userInfoFromDatabase = this.getByUserName(user.getUsername());
-
+        System.out.println(userInfoFromDatabase.toString());
         //this means there was a user with that username
         if (userInfoFromDatabase != null) {
             if (userInfoFromDatabase.getPasscode().equals(user.getPasscode())) {
                 //passcode match the user passcode form the registered user in the database
-                return 1;
+                if (userInfoFromDatabase.getRole().equals("manager")) {
+                    System.out.println("damn there a manager");
+                    return userInfoFromDatabase.getUserid();
+                }
+                return userInfoFromDatabase.getUserid();
             }
             // passcode does not match
             return -1;

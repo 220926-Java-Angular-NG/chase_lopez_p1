@@ -1,6 +1,7 @@
 package com.revature.services;
 
 import com.revature.models.Ticket;
+import com.revature.models.User;
 import com.revature.repos.TicketRepo;
 
 import java.util.List;
@@ -34,7 +35,11 @@ public class TicketService {
         return ticketRepo.getByID(ticketCode);
     }
 
-    public List<Ticket> getAllTicketsThatArePending(String userID) {
-        return ticketRepo.getAllTicketsThatArePending(userID);
+    public List<Ticket> getAllTicketsThatArePending(User user) {
+        return ticketRepo.getAllTicketsThatArePending(user);
+    }
+
+    public int processTicket(String userID, String ticketid, String decision) {
+        return ticketRepo.processTicket(userID,ticketid,decision);
     }
 }

@@ -1,6 +1,8 @@
 package com.revature.repos;
 
 import com.revature.models.Ticket;
+import com.revature.models.User;
+import com.revature.services.UserService;
 import com.revature.utils.ConnectionManager;
 import com.revature.utils.CrudDaoInterface;
 import org.slf4j.Logger;
@@ -12,11 +14,13 @@ import java.util.List;
 
 public class TicketRepo implements CrudDaoInterface<Ticket> {
     Connection con;
+    List<Ticket> pendingtickets;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserRepo.class);
 
     public TicketRepo() {
         try {
             con = ConnectionManager.getConnection();
+
             //System.out.println(con.getSchema());
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
@@ -150,17 +154,17 @@ public class TicketRepo implements CrudDaoInterface<Ticket> {
         return null;
     }
 
-    public List<Ticket> getAllTicketsThatArePending(String userID) {
+    public List<Ticket> getAllTicketsThatArePending(User user) {
         //check if the user is a manager if not send error
         //get tickets that are pending only
 
         List<Ticket> allTickets = new ArrayList<>();
         String sql = "select * from tickets where ticketstatus = 'pending'";
-        String sql2 = "select * from users where(userid = ? and employeestatus = 'manager')";
+        String sql2 = "select * from users where(username = ? and employeestatus = 'manager')";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
             PreparedStatement pstmt2 = con.prepareStatement(sql2);
-            pstmt2.setInt(1, Integer.parseInt(userID));
+            pstmt2.setString(1, user.getUsername());
             ResultSet rs = pstmt.executeQuery();
             ResultSet rsu = pstmt2.executeQuery();
             if (rsu.next()) {
@@ -180,5 +184,24 @@ public class TicketRepo implements CrudDaoInterface<Ticket> {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    public int processTicket(String userID, String ticketid, String decision) {
+        String sql2 = "select * from users where(userid = ? and employeestatus = 'manager')";
+        try {
+            PreparedStatement pstmt2 = con.prepareStatement(sql2);
+            pstmt2.setInt(1, Integer.parseInt(userID));
+            ResultSet rsu = pstmt2.executeQuery();
+            if (rsu.next()) {
+                System.out.println("manager was able to call this");
+
+            }
+            else {
+                System.out.println("not a manager or other sql error");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 }
