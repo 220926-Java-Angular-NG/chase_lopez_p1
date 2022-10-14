@@ -39,7 +39,7 @@ public class TicketService {
         return ticketRepo.getAllTicketsThatArePending(user);
     }
 
-    public int processTicket(String userID, String ticketid, String decision) {
-        return ticketRepo.processTicket(userID,ticketid,decision);
+    public int processTicket(User user, String ticketid, String decision) {
+        return ticketRepo.processTicket(user,ticketid,decision);
     }
 }

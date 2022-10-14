@@ -29,7 +29,7 @@ public class MoneyTest {
     @Test
     public void canCreateNewUserWithUsernameAndPasscode() {
         // Ability to register an account, should register with at least a username and password(passcode)
-        int idOfCreatedUser = userService.createUser(new User("tony", "passcode"));
+        int idOfCreatedUser = userService.createUser(new User("toony", "passcode"));
         int idOfLookUp = userService.getByID(idOfCreatedUser).getUserid();
         Assertions.assertEquals(idOfLookUp, idOfCreatedUser);
     }
@@ -102,4 +102,11 @@ public class MoneyTest {
         //delete tickets is called in the @before
         Assertions.assertEquals(0, ticketService.getAllTickets().size());
     }
+    @Test
+    public void deleteUser() {
+        //delete tickets is called in the @before
+        userService.createUser(new User("toony", "passcode"));
+        Assertions.assertEquals(false, userService.deleteUser(new User("toony","passcode")));
+    }
+
 }

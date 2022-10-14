@@ -15,10 +15,10 @@ public class TicketController {
     }
 
     public Handler processTicket = context -> {
-        String userID = context.pathParam("id");
-        String ticketid = context.pathParam("ticketid");
-        String decision = context.body();
-        int resultOfProcessRequest = ticketService.processTicket(userID, ticketid, decision);
+        String ticketid = context.pathParam("id");
+        String decision = context.pathParam("decision");
+        User user =  context.bodyAsClass(User.class);
+        int resultOfProcessRequest = ticketService.processTicket(user, ticketid, decision);
         // create handels
         switch (resultOfProcessRequest) {
             case -1:

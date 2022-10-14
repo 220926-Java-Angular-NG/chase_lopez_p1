@@ -19,7 +19,7 @@ public class Main
         //6 pending tickets in list for managers
         app.get("/managers/pendingTicketList",ticketController.getAllPendingTickets);
         //7 tickets can be processed
-        app.get("/managers/{id}/processPendingTicket/{ticketid}",ticketController.processTicket);
+        app.get("/managers/processPendingTicket/{id}/{decision}",ticketController.processTicket);
 
         app.get("/users/tickets",ticketController.getAllTickets);
 

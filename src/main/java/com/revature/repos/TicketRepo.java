@@ -60,6 +60,39 @@ public class TicketRepo implements CrudDaoInterface<Ticket> {
         }
         return 0;
     }
+    public int createWithStatus(Ticket ticket) {
+        if (ticket.getAmount() <= 0 || ticket.getDescription() == null) {
+            if (ticket.getAmount() < 0)
+                return -2;
+            if (ticket.getAmount() == 0)
+                return -4;
+            if (ticket.getDescription() == null)
+                return -3;
+        } else {
+            try {
+                String sql = "INSERT INTO tickets(ticketid,amount,description,ticketstatus,userid) VALUES (?,?,?,?,?)";
+                PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setInt(1,ticket.getId());
+                pstmt.setDouble(2, ticket.getAmount());
+                pstmt.setString(3, ticket.getDescription());
+                pstmt.setString(4, ticket.getTicketStatus());
+                pstmt.setInt(5, ticket.getUserid());
+
+                pstmt.executeUpdate();
+
+                ResultSet rs = pstmt.getGeneratedKeys();
+
+                rs.next();
+                return rs.getInt("ticketid");
+
+            } catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+                // error not expected on creation
+                return -1;
+            }
+        }
+        return 0;
+    }
 
     public int createWithUserIDInPath(Ticket ticket, String userid) {
         try {
@@ -100,13 +133,37 @@ public class TicketRepo implements CrudDaoInterface<Ticket> {
 
     @Override
     public Ticket update(Ticket ticket) {
+
+            String sql = "UPDATE tickets SET ticketstatus = ? WHERE ticketid = ?";
+            try {
+                PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, ticket.getTicketStatus());
+                pstmt.setInt(2, ticket.getId());
+                ResultSet rs = pstmt.executeQuery();
+                System.out.println(ticket);
+                return ticket;
+            } catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+                System.out.println(e.getMessage());
+            }
+
         return null;
     }
 
     @Override
     public boolean delete(Ticket ticket) {
+        // returns false is successful delete
+        String sql = "DELETE FROM tickets WHERE ticketid = ?";
+        try {
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, ticket.getId());
+            return pstmt.execute();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            System.out.println(e.getMessage());
 
-        return false;
+        }
+        return true;
     }
 
     public List<Ticket> getAllTicketsByUserID(String userID) {
@@ -186,21 +243,44 @@ public class TicketRepo implements CrudDaoInterface<Ticket> {
         return null;
     }
 
-    public int processTicket(String userID, String ticketid, String decision) {
-        String sql2 = "select * from users where(userid = ? and employeestatus = 'manager')";
+    public int processTicket(User user, String ticketid, String decision) {
+        String sql = "select * from tickets where ticketid = ?";
+        String sql2 = "select * from users where(username = ? and employeestatus = 'manager')";
         try {
+            PreparedStatement pstmt = con.prepareStatement(sql);
             PreparedStatement pstmt2 = con.prepareStatement(sql2);
-            pstmt2.setInt(1, Integer.parseInt(userID));
+            pstmt.setInt(1, Integer.parseInt(ticketid));
+            pstmt2.setString(1, user.getUsername());
+            ResultSet rs = pstmt.executeQuery();
             ResultSet rsu = pstmt2.executeQuery();
+
             if (rsu.next()) {
                 System.out.println("manager was able to call this");
+                while(rs.next()){
+                    // ticket matched sql querry finding ticket
+                    Ticket ticket = new Ticket(rs.getInt("ticketid"),
+                            rs.getDouble("amount"),
+                            rs.getString("description"),
+                            rs.getString("ticketstatus"),
+                            rs.getInt("userid"));
+                    System.out.println(ticket.toString());
+                    ticket.setTicketStatus(decision);
+                    System.out.println(ticket.toString());
+                    // make db reflect this ticket^
+                    //this.update(ticket);
+                    this.delete(ticket);
+                    System.out.println(ticket.toString());
+                    System.out.println(this.createWithStatus(ticket));
 
-            }
-            else {
-                System.out.println("not a manager or other sql error");
+                    return ticket.getId();
+                }
+            } else {
+                System.out.println("not a manager");
+                return -1;
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            return -2;
         }
         return 0;
     }

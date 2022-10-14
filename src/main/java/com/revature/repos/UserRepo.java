@@ -140,14 +140,15 @@ public class UserRepo implements CrudDaoInterface<User> {
 
     @Override
     public boolean delete(User user) {
-        String sql = "DELETE FROM users WHERE userid = ?";
+        String sql = "DELETE FROM users WHERE username = ?";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, user.getUserid());
+            pstmt.setString(1, user.getUsername());
             return pstmt.execute();
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
             System.out.println(e.getMessage());
+
         }
         return true;
     }
